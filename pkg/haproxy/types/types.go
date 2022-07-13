@@ -60,6 +60,7 @@ type Global struct {
 	SSL                     SSLConfig
 	DNS                     DNSConfig
 	ModSecurity             ModSecurityConfig
+	Coraza                  CorazaConfig
 	Cookie                  CookieConfig
 	DrainSupport            DrainConfig
 	Acme                    Acme
@@ -183,6 +184,11 @@ type ModSecurityConfig struct {
 	Timeout   ModSecurityTimeoutConfig
 }
 
+type CorazaConfig struct {
+	Endpoints []string
+	Timeout   CorazaTimeoutConfig
+}
+
 // CookieConfig ...
 type CookieConfig struct {
 	Key string
@@ -240,6 +246,17 @@ type StatsConfig struct {
 type ModSecurityTimeoutConfig struct {
 	// Backend
 	Connect string
+	Server  string
+	// SPOE
+	Hello      string
+	Idle       string
+	Processing string
+}
+
+type CorazaTimeoutConfig struct {
+	// Backend
+	Connect string
+	Client  string
 	Server  string
 	// SPOE
 	Hello      string

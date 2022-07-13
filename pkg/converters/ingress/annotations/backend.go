@@ -990,7 +990,7 @@ func (c *updater) buildBackendWAF(d *backData) {
 		if module == "" {
 			continue
 		}
-		if module != "modsecurity" {
+		if module != "modsecurity" && module != "coraza" {
 			c.logger.Warn("ignoring invalid WAF module on %s: %s", waf.Source, module)
 			continue
 		}

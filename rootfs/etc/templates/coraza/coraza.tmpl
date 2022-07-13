@@ -1,0 +1,26 @@
+  # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+# #
+# #   HAProxy Ingress Controller
+# #   --------------------------
+# #   This file is automatically updated, do not edit
+# #
+#
+{{- $modsec := .Global.Coraza }}
+[coraza]
+spoe-agent coraza-agent
+    messages coraza-req coraza-res
+    option var-prefix coraza
+    timeout hello      {{ $modsec.Timeout.Hello }}
+    timeout idle       {{ $modsec.Timeout.Idle }}
+    timeout processing {{ $modsec.Timeout.Processing }}
+    use-backend coraza-spoa
+    log global
+
+spoe-message coraza-req
+    args id=unique-id src-ip=src method=method path=path query=query version=req.ver headers=req.hdrs bodyreq.body
+    event on-frontend-http-request
+
+spoe-message coraza-res
+    args id=unique-id version=res.ver status=status headers=res.hdrs body=res.body
+    event on-http-response

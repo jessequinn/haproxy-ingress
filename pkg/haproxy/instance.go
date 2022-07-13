@@ -105,6 +105,7 @@ type instance struct {
 	haproxyTmpl     *template.Config
 	mapsTmpl        *template.Config
 	modsecTmpl      *template.Config
+	corazaTmpl      *template.Config
 	haResponseTmpl  *template.Config
 	luaResponseTmpl *template.Config
 }
@@ -174,6 +175,15 @@ func (i *instance) ParseTemplates() error {
 		"modsecurity.tmpl",
 		templatesDir+"/modsecurity/modsecurity.tmpl",
 		i.options.HAProxyCfgDir+"/spoe-modsecurity.conf",
+		0,
+		1024,
+	); err != nil {
+		return err
+	}
+	if err := i.modsecTmpl.NewTemplate(
+		"coraza.tmpl",
+		templatesDir+"/coraza/coraza.tmpl",
+		i.options.HAProxyCfgDir+"/spoe-coraza.conf", // TODO: change name
 		0,
 		1024,
 	); err != nil {

@@ -223,6 +223,16 @@ func (b *Backend) HasModsec() bool {
 	return false
 }
 
+// HasCoraza is a method to verify if a Backend has Coraza Enabled
+func (b *Backend) HasCoraza() bool {
+	for _, path := range b.Paths {
+		if path.WAF.Module == "coraza" {
+			return true
+		}
+	}
+	return false
+}
+
 // HasSSLRedirect ...
 func (b *Backend) HasSSLRedirect() bool {
 	for _, path := range b.Paths {

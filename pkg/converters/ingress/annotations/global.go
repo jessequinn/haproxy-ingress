@@ -346,6 +346,16 @@ func (c *updater) buildGlobalModSecurity(d *globalData) {
 	d.global.ModSecurity.Timeout.Server = c.validateTime(d.mapper.Get(ingtypes.GlobalModsecurityTimeoutServer))
 }
 
+func (c *updater) buildGlobalCoraza(d *globalData) {
+	d.global.Coraza.Endpoints = utils.Split(d.mapper.Get(ingtypes.GlobalCorazaEndpoints).Value, ",")
+	d.global.Coraza.Timeout.Connect = c.validateTime(d.mapper.Get(ingtypes.GlobalCorazaTimeoutConnect))
+	d.global.Coraza.Timeout.Client = c.validateTime(d.mapper.Get(ingtypes.GlobalCorazaTimeoutClient))
+	d.global.Coraza.Timeout.Hello = c.validateTime(d.mapper.Get(ingtypes.GlobalCorazaTimeoutHello))
+	d.global.Coraza.Timeout.Idle = c.validateTime(d.mapper.Get(ingtypes.GlobalCorazaTimeoutIdle))
+	d.global.Coraza.Timeout.Processing = c.validateTime(d.mapper.Get(ingtypes.GlobalCorazaTimeoutProcessing))
+	d.global.Coraza.Timeout.Server = c.validateTime(d.mapper.Get(ingtypes.GlobalCorazaTimeoutServer))
+}
+
 func (c *updater) buildGlobalDNS(d *globalData) {
 	resolvers := d.mapper.Get(ingtypes.GlobalDNSResolvers).Value
 	if resolvers == "" {

@@ -590,6 +590,23 @@ backend {{ $backend.ID }}
 {{- end }}
 
 {{- /*------------------------------------*/}}
+{{- if and $global.Coraza.Endpoints $backend.HasCoraza }}
+    unique-id-format %[uuid()]
+    unique-id-header X-Unique-ID
+    filter spoe engine coraza config {{ $global.LocalFSPrefix }}/etc/haproxy/coraza.cfg
+{{- $wafCfg := $backend.PathConfig "WAF" }}
+{{- range $i, $waf := $wafCfg.Items }}
+{{- if eq $waf.Mode "deny" }}
+{{- range $pathIDs := $wafCfg.PathIDs $i }}
+    http-request deny if { var(txn.coraza.fail) -m int eq 1 }
+    http-response deny if { var(txn.coraza.fail) -m int eq 1 }
+        {{- if $pathIDs }} { var(txn.pathID) -m str {{ $pathIDs }} }{{ end }}
+{{- end }}
+{{- end }}
+{{- end }}
+{{- end }}
+
+{{- /*------------------------------------*/}}
 {{- range $header := $backend.Headers }}
     http-request set-header {{ $header.Name }} {{ $header.Value }}
 {{- end }}
@@ -1573,5 +1590,22 @@ backend spoe-modsecurity
     server modsec-spoa{{ $i }} {{ $endpoint }}
 {{- end }}
 {{- end }}
+
+{{- if $global.Coraza.Endpoints }}
+
+  # # # # # # # # # # # # # # # # # # #
+# #
+#     Coraza Agent
+#
+backend coraza-spoa
+    mode tcp
+    timeout connect {{ $global.Coraza.Timeout.Connect }}
+    timeout client {{ $global.Coraza.Timeout.Client }}
+    timeout server  {{ $global.Coraza.Timeout.Server }}
+{{- range $i, $endpoint := $global.Coraza.Endpoints }}
+    server s{{ $i }} {{ $endpoint }}
+{{- end }}
+{{- end }}
+
 
 {{- end }}{{/* define "frontend-support" */}}
